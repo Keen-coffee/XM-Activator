@@ -1,0 +1,4 @@
+Flask>=2.0.2
+Flask-SQLAlchemy>=3.0.0
+requests==2.25.1
+# Add other dependencies as needed
