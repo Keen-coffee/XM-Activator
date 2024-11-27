@@ -36,6 +36,9 @@ def check_and_activate_radios():
             # Get the current date and time
             current_time = datetime.utcnow()
 
+            # Log the current time of the check
+            print(f"[{current_time}] Running check for radios older than 90 days.")
+
             # Calculate the threshold time (90 days ago)
             threshold_time = current_time - timedelta(days=90)
 
