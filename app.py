@@ -494,5 +494,6 @@ if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
 
 # Start the background task
+print("Starting background thread for auto-activation...")
 background_thread = threading.Thread(target=check_and_activate_radios, daemon=True)
 background_thread.start()
