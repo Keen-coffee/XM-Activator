@@ -68,7 +68,7 @@ def check_and_activate_radios():
                 
                 logging.info(f"[{datetime.utcnow()}] Completed one iteration of the check-and-activate loop.")
                 # Sleep for a set interval (e.g., 1 hour) before checking again
-                time.sleep(30)  # Adjust the interval as needed
+                time.sleep(3600)  # Adjust the interval as needed
             except Exception as e:
                     logging.error(f"Error in background thread: {str(e)}")
 
