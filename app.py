@@ -61,7 +61,7 @@ def check_and_activate_radios():
                     print(f"Error activating radio {radio.id}: {str(e)}")
 
             # Sleep for a set interval (e.g., 1 hour) before checking again
-            time.sleep(3600)  # Adjust the interval as needed
+            time.sleep(300)  # Adjust the interval as needed
 
 def appconfig():
     global debug_code
