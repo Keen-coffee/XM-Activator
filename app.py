@@ -34,34 +34,37 @@ debug_body = None
 def check_and_activate_radios():
     with app.app_context():
         while True:
-            # Get the current date and time
-            current_time = datetime.utcnow()
+            try:
+                # Get the current date and time
+                current_time = datetime.utcnow()
 
-            # Log the current time of the check
-            print(f"[{current_time}] Running check for radios older than 90 days.")
+                # Log the current time of the check
+                print(f"[{current_time}] Running check for radios older than 90 days.")
 
-            # Calculate the threshold time (90 days ago)
-            threshold_time = current_time - timedelta(days=90)
+                # Calculate the threshold time (90 days ago)
+                threshold_time = current_time - timedelta(days=90)
 
-            # Query radios with modified date older than 90 days
-            radios_to_activate = Radio.query.filter(Radio.modified < threshold_time).all()
+                # Query radios with modified date older than 90 days
+                radios_to_activate = Radio.query.filter(Radio.modified < threshold_time).all()
 
-            for radio in radios_to_activate:
-                try:
-                    # Trigger the /activate endpoint
-                    response = requests.post(f"http://127.0.0.1:5000/activate/{radio.id}")
-                    
-                    # Log the response for debugging
-                    if response.status_code == 200:
-                        print(f"Successfully activated radio {radio.id}.")
-                    else:
-                        print(f"Failed to activate radio {radio.id}: {response.text}")
+                for radio in radios_to_activate:
+                    try:
+                        # Trigger the /activate endpoint
+                        response = requests.post(f"http://127.0.0.1:5000/activate/{radio.id}")
+                        
+                        # Log the response for debugging
+                        if response.status_code == 200:
+                            print(f"Successfully activated radio {radio.id}.")
+                        else:
+                            print(f"Failed to activate radio {radio.id}: {response.text}")
 
-                except Exception as e:
-                    print(f"Error activating radio {radio.id}: {str(e)}")
+                    except Exception as e:
+                        print(f"Error activating radio {radio.id}: {str(e)}")
 
-            # Sleep for a set interval (e.g., 1 hour) before checking again
-            time.sleep(300)  # Adjust the interval as needed
+                # Sleep for a set interval (e.g., 1 hour) before checking again
+                time.sleep(30)  # Adjust the interval as needed
+            except Exception as e:
+                    print(f"Error in background thread: {str(e)}")
 
 def appconfig():
     global debug_code
