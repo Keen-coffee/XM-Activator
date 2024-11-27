@@ -490,10 +490,11 @@ def debug():
     # Return a response indicating success or failure
     return jsonify({'message': 'Debugging information logged successfully'})
 
-if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
-
 # Start the background task
 print("Starting background thread for auto-activation...")
 background_thread = threading.Thread(target=check_and_activate_radios, daemon=True)
 background_thread.start()
+
+if __name__ == '__main__':
+    app.run(debug=True,host='0.0.0.0')
+
