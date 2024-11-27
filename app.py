@@ -9,6 +9,11 @@ import json
 import uuid
 import threading
 import time
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+
+logging.info("Starting the Flask app and background thread.")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///radios.db'
@@ -39,7 +44,7 @@ def check_and_activate_radios():
                 current_time = datetime.utcnow()
 
                 # Log the current time of the check
-                print(f"[{current_time}] Running check for radios older than 90 days.")
+                logging.info(f"[{current_time}] Running check for radios older than 90 days.")
 
                 # Calculate the threshold time (90 days ago)
                 threshold_time = current_time - timedelta(days=90)
@@ -54,18 +59,18 @@ def check_and_activate_radios():
                         
                         # Log the response for debugging
                         if response.status_code == 200:
-                            print(f"Successfully activated radio {radio.id}.")
+                            logging.info(f"Successfully activated radio {radio.id}.")
                         else:
-                            print(f"Failed to activate radio {radio.id}: {response.text}")
+                            logging.error(f"Failed to activate radio {radio.id}: {response.text}")
 
                     except Exception as e:
-                        print(f"Error activating radio {radio.id}: {str(e)}")
+                        logging.error(f"Error activating radio {radio.id}: {str(e)}")
                 
-                print(f"[{datetime.utcnow()}] Completed one iteration of the check-and-activate loop.")
+                logging.info(f"[{datetime.utcnow()}] Completed one iteration of the check-and-activate loop.")
                 # Sleep for a set interval (e.g., 1 hour) before checking again
                 time.sleep(30)  # Adjust the interval as needed
             except Exception as e:
-                    print(f"Error in background thread: {str(e)}")
+                    logging.error(f"Error in background thread: {str(e)}")
 
 def appconfig():
     global debug_code
@@ -88,7 +93,7 @@ def appconfig():
         debug_body=response.content
         return response.json()        
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def login():
     global debug_code
@@ -113,7 +118,7 @@ def login():
         debug_body=response.content
         return response.json().get('claims_token').get('value')
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def version_control():
     global debug_code
@@ -144,7 +149,7 @@ def version_control():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def get_properties():
     global debug_code
@@ -169,7 +174,7 @@ def get_properties():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def update_device_sat_refresh_with_priority():
     global debug_code
@@ -201,7 +206,7 @@ def update_device_sat_refresh_with_priority():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def get_crm_account_plan_information():
     global debug_code
@@ -228,7 +233,7 @@ def get_crm_account_plan_information():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def db_update_for_google():
     global debug_code
@@ -263,7 +268,7 @@ def db_update_for_google():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def block_list_device():
     global debug_code
@@ -289,7 +294,7 @@ def block_list_device():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def create_account():
     global debug_code
@@ -319,7 +324,7 @@ def create_account():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 def update_device_sat_refresh_with_priority_cc():
     global debug_code
@@ -351,7 +356,7 @@ def update_device_sat_refresh_with_priority_cc():
         debug_body=response.content
         return response.json()
     except requests.exceptions.RequestException:
-        print ('HTTP Request Failed')
+        logging.error ('HTTP Request Failed')
 
 class Radio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -430,7 +435,7 @@ def activate_radio(id):
         "update_2": update_device_sat_refresh_with_priority_cc(),
         "db_2": db_update_for_google()
     }
-    print(output)
+    logging.error(output)
     result_data = output["create"]["resultData"]
     if len(result_data) >= 3:
         actMessage = result_data[2].get('message')
@@ -489,14 +494,14 @@ def debug():
     # Your debugging logic here
     # For example:
     if debug:
-        print('Code: {status_code}'.format(status_code=debug_code))
-        print('Body: {content}'.format(content=debug_body))
+        logging.info('Code: {status_code}'.format(status_code=debug_code))
+        logging.info('Body: {content}'.format(content=debug_body))
     
     # Return a response indicating success or failure
     return jsonify({'message': 'Debugging information logged successfully'})
 
 # Start the background task
-print("Starting background thread for auto-activation...")
+logging.info("Starting background thread for auto-activation...")
 background_thread = threading.Thread(target=check_and_activate_radios, daemon=True)
 background_thread.start()
 
