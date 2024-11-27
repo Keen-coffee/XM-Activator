@@ -500,5 +500,5 @@ background_thread = threading.Thread(target=check_and_activate_radios, daemon=Tr
 background_thread.start()
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True, use_reloader=False, host='0.0.0.0')
 
