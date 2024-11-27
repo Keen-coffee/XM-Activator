@@ -60,7 +60,8 @@ def check_and_activate_radios():
 
                     except Exception as e:
                         print(f"Error activating radio {radio.id}: {str(e)}")
-
+                
+                print(f"[{datetime.utcnow()}] Completed one iteration of the check-and-activate loop.")
                 # Sleep for a set interval (e.g., 1 hour) before checking again
                 time.sleep(30)  # Adjust the interval as needed
             except Exception as e:
