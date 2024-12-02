@@ -41,16 +41,20 @@ def check_and_activate_radios():
         while True:
             try:
                 # Get the current date and time
-                current_time = datetime.utcnow()
+                current_time = datetime.now(datetime.timezone.utc)
 
                 # Log the current time of the check
                 logging.info(f"[{current_time}] Running check for radios older than 90 days.")
 
                 # Calculate the threshold time (90 days ago)
                 threshold_time = current_time - timedelta(days=90)
+                last_attempt_threshold = current_time - timedelta(hours=24)
 
-                # Query radios with modified date older than 90 days
-                radios_to_activate = Radio.query.filter(Radio.modified < threshold_time).all()
+                # Query radios with activated date older than 90 days
+                radios_to_activate = Radio.query.filter(
+                    ((Radio.activated < threshold_time) | (Radio.activated == None)) &
+                    ((Radio.last_attempt == None) | (Radio.last_attempt < last_attempt_threshold))
+                ).all()
 
                 for radio in radios_to_activate:
                     try:
@@ -66,7 +70,7 @@ def check_and_activate_radios():
                     except Exception as e:
                         logging.error(f"Error activating radio {radio.id}: {str(e)}")
                 
-                logging.info(f"[{datetime.utcnow()}] Completed one iteration of the check-and-activate loop.")
+                logging.info(f"[{datetime.now(datetime.timezone.utc)}] Completed one iteration of the check-and-activate loop.")
                 # Sleep for a set interval (e.g., 1 hour) before checking again
                 time.sleep(3600)  # Adjust the interval as needed
             except Exception as e:
@@ -361,7 +365,8 @@ def update_device_sat_refresh_with_priority_cc():
 class Radio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     radio_id = db.Column(db.String(50), unique=True, nullable=False)
-    modified = db.Column(db.DateTime, default=datetime.utcnow)
+    activated = db.Column(db.DateTime, nullable=True)
+    last_attempt = db.Column(db.DateTime, nullable=True)
     status = db.Column(db.String(20), nullable=True)
     message = db.Column(db.String(200), nullable=True)
     log = db.Column(db.Text, nullable=True)
@@ -447,10 +452,11 @@ def activate_radio(id):
 
     with app.app_context():
         try:
+            currentTime_last_attempt = datetime.now(datetime.timezone.utc)
             if actCode == "SUCCESS":
-                currentTime = datetime.utcnow()
+                currentTime_activated = datetime.now(datetime.timezone.utc)
             else:
-                currentTime = radio_to_activate.modified
+                currentTime_activated = radio_to_activate.activated
         
             # Mark the 'status' attribute as dirty
             db.session.execute(
@@ -458,7 +464,8 @@ def activate_radio(id):
                 .where(Radio.id == id)
                 .values(status=actCode)
                 .values(message=actMessage)
-                .values(modified=currentTime)
+                .values(activated=currentTime_activated)
+                .values(last_attempt=currentTime_last_attempt)
                 .values(log=(json.dumps(output, indent=2)))
             )
 
