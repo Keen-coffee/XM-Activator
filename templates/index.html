@@ -42,8 +42,8 @@
                 <tr>
                     <td>{{ radio.alias }}</td>
                     <td>{{ radio.radio_id }}</td>
-                    <td>{{ radio.activated.strftime('%Y-%m-%d') }}</td>
-                    <td>{{ radio.last_attempt.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ radio.activated.strftime('%Y-%m-%d') if radio.activated else 'N/A' }}</td>
+                    <td>{{ radio.last_attempt.strftime('%Y-%m-%d') if radio.last_attempt else 'N/A' }}</td>
                     <td>{{ radio.status }}</td>
                     <td>{{ radio.message }}</td>
                     <td>
