@@ -48,7 +48,7 @@ def check_and_activate_radios():
                 logging.info(f"[{current_time}] Running check for radios older than 90 days.")
 
                 # Calculate the threshold time (90 days ago)
-                threshold_time = current_time - timedelta(days=90)
+                threshold_time = current_time - timedelta(days=90,hours=4)
                 last_attempt_threshold = current_time - timedelta(hours=24)
 
                 # Query radios with activated date older than 90 days
