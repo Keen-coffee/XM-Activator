@@ -38,6 +38,7 @@ debug_body = None
 # Background Task for Auto-Activation
 def check_and_activate_radios():
     with app.app_context():
+        db.create_all()
         while True:
             try:
                 # Get the current date and time
