@@ -41,7 +41,7 @@ def check_and_activate_radios():
         while True:
             try:
                 # Get the current date and time
-                current_time = datetime.now(datetime.timezone.utc)
+                current_time = datetime.now()
 
                 # Log the current time of the check
                 logging.info(f"[{current_time}] Running check for radios older than 90 days.")
@@ -70,7 +70,7 @@ def check_and_activate_radios():
                     except Exception as e:
                         logging.error(f"Error activating radio {radio.id}: {str(e)}")
                 
-                logging.info(f"[{datetime.now(datetime.timezone.utc)}] Completed one iteration of the check-and-activate loop.")
+                logging.info(f"[{datetime.now()}] Completed one iteration of the check-and-activate loop.")
                 # Sleep for a set interval (e.g., 1 hour) before checking again
                 time.sleep(3600)  # Adjust the interval as needed
             except Exception as e:
@@ -452,9 +452,9 @@ def activate_radio(id):
 
     with app.app_context():
         try:
-            currentTime_last_attempt = datetime.now(datetime.timezone.utc)
+            currentTime_last_attempt = datetime.now()
             if actCode == "SUCCESS":
-                currentTime_activated = datetime.now(datetime.timezone.utc)
+                currentTime_activated = datetime.now()
             else:
                 currentTime_activated = radio_to_activate.activated
         
