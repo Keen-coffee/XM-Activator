@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 from sqlalchemy.orm import scoped_session, make_transient
 from sqlalchemy.exc import SQLAlchemyError
 import requests
